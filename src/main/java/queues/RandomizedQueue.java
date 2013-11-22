@@ -14,36 +14,42 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         this(DEFAULT_CAPACITY);
     }
 
-    public RandomizedQueue(int iCapacity) {          // construct an empty randomized queue
+    private RandomizedQueue(int iCapacity) {          // construct an empty randomized queue
         data = (Item[]) new Object[iCapacity];
         capacity = iCapacity;
         initialCapacity = iCapacity;
     }
-    public boolean isEmpty() { return size == 0; }           // is the queue empty?
-    public int size() { return size; }                 // return the number of items on the queue
+
+    public boolean isEmpty() {
+        return size == 0;
+    }           // is the queue empty?
+
+    public int size() {
+        return size;
+    }                 // return the number of items on the queue
 
     public void enqueue(Item item) {    // add the item
-        if(item == null) throw new NullPointerException("add null");
+        if (item == null) throw new NullPointerException("add null");
         data[size] = item;
         size++;
-        if(size == capacity) {
+        if (size == capacity) {
             int newCapacity = capacity * mult;
             createNewArray(newCapacity);
         }
     }
 
     public Item dequeue() {             // delete and return a random item
-        if(size == 0) throw new NoSuchElementException("dequeue on empty queue");
+        if (size == 0) throw new NoSuchElementException("dequeue on empty queue");
         int i = StdRandom.uniform(size);
         Item item = data[i];
-        if(i != size - 1 || size > 2) {
+        if (i != size - 1) {
             data[i] = data[size - 1];
-            data[size-1] = null;
         }
+        data[size - 1] = null;
         size--;
-        if(size > 0 && capacity > initialCapacity && size <= capacity / div) {
+        if (size > 0 && capacity > initialCapacity && size <= capacity / div) {
             int newCapacity = capacity / mult;
-            if(newCapacity < initialCapacity) {
+            if (newCapacity < initialCapacity) {
                 newCapacity = initialCapacity;
             }
             createNewArray(newCapacity);
@@ -59,7 +65,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     public Item sample() {              // return (but do not delete) a random item
-        if(size == 0) throw new NoSuchElementException("sample on empty queue");
+        if (size == 0) throw new NoSuchElementException("sample on empty queue");
         int i = StdRandom.uniform(size);
         Item item = data[i];
         return item;
@@ -71,7 +77,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return new RandomizedQueueIterator(newData);
     }
 
-    private class RandomizedQueueIterator implements Iterator<Item>{
+    private class RandomizedQueueIterator implements Iterator<Item> {
         private Item[] data;
         private int cur = 0;
 
@@ -87,6 +93,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         @Override
         public Item next() {
+            if (!hasNext()) throw new NoSuchElementException("you reached the end of the queue");
             return data[cur++];
         }
 
